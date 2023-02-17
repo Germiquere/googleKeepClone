@@ -31,7 +31,7 @@ const StyledCard = styled(Card)`
   box-shadow: none;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  background-color: #a7ffeb;
+  // background-color: #a7ffeb;
 `;
 const DeleteNote = ({ note }) => {
   const {
@@ -52,7 +52,7 @@ const DeleteNote = ({ note }) => {
     setDeleteNotes(newArray);
   };
   return (
-    <StyledCard>
+    <StyledCard sx={{ backgroundColor: note.background }}>
       <CardContent>
         <Typography>{note.heading}</Typography>
         <Typography>{note.text}</Typography>

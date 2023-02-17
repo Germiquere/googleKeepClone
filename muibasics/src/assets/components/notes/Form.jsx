@@ -20,6 +20,8 @@ import { CheckedContext } from "../../context/CheckedState";
 import { Login } from "@mui/icons-material";
 import Popper from "@mui/material/Popper";
 import Paper from "@mui/material/Paper";
+
+import BasicPopover from "../BasicPopover";
 const CToolTip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} />
 ))(({ theme }) => ({
@@ -51,7 +53,8 @@ const note = {
   id: "",
   heading: "",
   text: "",
-  pin: "",
+  pin: false,
+  background: "white",
 };
 const Icons = styled(Box)(({}) => ({
   display: "flex",
@@ -83,83 +86,96 @@ const StyledIconButton = styled(IconButton)(({}) => ({
 // });
 
 const Form = () => {
+  const [bGChange, setBGChange] = useState("white");
+
   const { checked, setChecked } = useContext(CheckedContext);
-  const { dale, setDale } = useState(false);
-  console.log(checked);
-  console.log(note.pin);
-  const handleCheckedFalse = () => {
-    console.log(checked);
-    setChecked(false);
-    console.log(note.pin);
-  };
-  const handleCheckedTrue = () => {
-    console.log(checked);
-    setChecked(true);
-    console.log(note.pin);
-  };
-  // console.log(note.pin);
+
   const { notes, setNotes } = useContext(DataContext);
-  // console.log(checked);
+
   const [addNote, setAddNote] = useState({
     ...note,
     id: uuid(),
   });
-
+  const [pinned, setPinned] = useState(true);
+  const handlePinned = () => {
+    setPinned(!pinned);
+    let changeNote = {
+      ...addNote,
+      pin: pinned,
+    };
+    setAddNote(changeNote);
+    console.log(changeNote);
+  };
   const [showTextField, setShowTextField] = useState(false);
-  const containerRef = useRef();
+
   // POPPER
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(anchorEl ? null : event.currentTarget);
+  // const [openBSettings, setOpenBSettings] = useState(false);
+  // const handleClickBG = () => {
+  //   setOpenBSettings(!openBSettings);
+  // };
+  const [anchorElPopover, setAnchorElPopover] = useState(null);
+  const divRef = useRef(null);
+  const handleClickPopover = () => {
+    setAnchorElPopover(divRef.current);
+  };
+  const handleClosePopover = () => {
+    setAnchorElPopover(null);
+  };
+
+  const [itemClicked, setItemClicked] = useState(1);
+  const handleItemClicked = (itemId) => {
+    setItemClicked(itemId);
   };
   // POPPER
 
   const onTextAreaClick = () => {
     setShowTextField(true);
-    containerRef.current.style.minHeight = "70px";
   };
-  const handleClickAway = () => {
-    setShowTextField(false);
-    containerRef.current.style.minHeight = "30px";
-    setAddNote({ ...note, id: uuid() });
-    // si alguno de esos dos campos esta vacio no se ejecuta el setNotes
 
-    if (addNote.text || addNote.heading) {
-      setNotes((prevArr) => [addNote, ...prevArr]);
-    } else {
-      console.log(checked);
-      setChecked(false);
-    }
-    setChecked(false);
-  };
-  const onToggleChecked = () => {
-    console.log("hice checked o no checked");
-    setChecked(!checked);
-    console.log(checked);
-    let changeNote = {
-      ...addNote,
-      pin: !checked ? true : false,
-    };
-    setAddNote(changeNote);
-    // console.log(changeNote.pin);
-    console.log(note.pin);
-  };
   const onTextChange = (e) => {
     let changeNote = {
       ...addNote,
       [e.target.name]: e.target.value,
     };
 
-    console.log(changeNote.pin);
+    setAddNote(changeNote);
+    console.log(addNote);
+  };
+  const changeBGColor = (color) => {
+    console.log(note.background);
+    let changeNote = {
+      ...addNote,
+      background: color,
+    };
+    // console.log(addNote);
     setAddNote(changeNote);
   };
+  const handleClickAway = () => {
+    setShowTextField(false);
+    // si alguno de esos dos campos esta vacio no se ejecuta el setNotes
+    setAddNote({ ...note, id: uuid() });
 
-  const id = open ? "simple-popper" : undefined;
+    if (addNote.text || addNote.heading) {
+      setNotes((prevArr) => [addNote, ...prevArr]);
+    }
+    // setChecked(false);
+    console.log(addNote);
+    setItemClicked(1);
+
+    // para que se cierre siempre el bgsettings cuando hago click away
+
+    setBGChange("white");
+    setPinned(true);
+  };
+  // const id = open ? "simple-popper" : undefined;
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
-      <Container ref={containerRef}>
+      <Container
+        style={{ backgroundColor: bGChange }}
+        ref={divRef}
+        className="target"
+      >
         {showTextField && (
           // title
           <Box
@@ -186,28 +202,14 @@ const Form = () => {
               value={addNote.heading}
             ></TextField>
             <CToolTip
-              title={checked ? "Unpin note" : "Pin note"}
-              onClick={onToggleChecked}
+              title={addNote.pin ? "Unpin note" : "Pin note"}
+              onClick={() => {
+                handlePinned();
+              }}
+              className="ruperta"
             >
               <StyledIconButton edge="start">
-                {/* <PushPinOutlinedIcon
-                  sx={{
-                    "&:hover": {
-                      color: "#202124",
-                    },
-                  }}
-                /> */}
-                <Checkbox
-                  sx={{
-                    color: "#5f6368",
-                    "&:hover": {
-                      color: "#202124",
-                    },
-                  }}
-                  icon={<PushPinOutlinedIcon />}
-                  checkedIcon={<PushPinIcon sx={{ color: "#5f6368" }} />}
-                  disableRipple
-                />
+                {addNote.pin ? <PushPinIcon /> : <PushPinOutlinedIcon />}
               </StyledIconButton>
             </CToolTip>
           </Box>
@@ -242,6 +244,7 @@ const Form = () => {
                   // aria-label="open drawer"
                   edge="start"
                   size="large"
+                  disabled
                 >
                   <CheckBoxOutlinedIcon
                     sx={{
@@ -257,6 +260,7 @@ const Form = () => {
                   // aria-label="open drawer"
                   edge="start"
                   size="large"
+                  disabled
                 >
                   <BrushOutlinedIcon
                     sx={{
@@ -272,6 +276,7 @@ const Form = () => {
                   // aria-label="open drawer"
                   edge="start"
                   size="large"
+                  disabled
                 >
                   <ImageOutlinedIcon
                     sx={{
@@ -294,7 +299,9 @@ const Form = () => {
                 <StyledIconButton
                   // aria-label="open drawer"
                   edge="start"
-                  onClick={handleClick}
+                  // onClick={handleClickBG}
+
+                  onClick={handleClickPopover}
                 >
                   <ColorLensOutlinedIcon
                     sx={{
@@ -332,22 +339,17 @@ const Form = () => {
               >
                 Close
               </Button>
-              <Popper
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                style={{
-                  position: "absolute",
-                  transform: "translate(-50%, -50%)",
-                }}
-              >
-                <Box sx={{ border: 1, p: 1, bgcolor: "background.paper" }}>
-                  The content of the Popper.
-                </Box>
-              </Popper>
             </Icons>
           )}
         </Box>
+        <BasicPopover
+          anchorElPopover={anchorElPopover}
+          handleClosePopover={handleClosePopover}
+          setBGChange={setBGChange}
+          changeBGColor={changeBGColor}
+          itemClicked={itemClicked}
+          handleItemClicked={handleItemClicked}
+        ></BasicPopover>
       </Container>
     </ClickAwayListener>
   );

@@ -8,11 +8,11 @@ import Masonry from "@mui/lab/Masonry";
 //components
 import Form from "./Form";
 import Note from "./Note";
-import TestMansory from "../TestMansory";
 
 import { DataContext } from "../../context/DataProvider";
 import { SearchContext } from "../../context/SearchProvider";
 import EmptyNotes from "./EmptyNotes";
+
 // const MuiMasonry = styled(Masonry)({
 //   ".MuiMasonry-root": {
 //     backgroundColor: "red"
@@ -35,8 +35,9 @@ const Item = styled(Paper)(({ theme }) => ({
   // border: "none",
   boxShadow: "none",
 }));
-const Notes = () => {
+const Notes = ({ orderNotes }) => {
   const { notes } = useContext(DataContext);
+
   const { filter } = useContext(SearchContext);
 
   const filteredNotes = notes.filter(
@@ -49,6 +50,7 @@ const Notes = () => {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         <Form></Form>
+
         {/* <TestMansory></TestMansory> */}
         {filteredNotes.length > 0 ? (
           <Box sx={{ display: "flex", justifyContent: "center" }}>
@@ -64,7 +66,7 @@ const Notes = () => {
             >
               {filteredNotes.map((note) => (
                 <Item key={note.id} sx={{ width: "100%" }}>
-                  <Note note={note}></Note>
+                  <Note note={note} orderNotes={orderNotes}></Note>
                 </Item>
               ))}
             </Masonry>

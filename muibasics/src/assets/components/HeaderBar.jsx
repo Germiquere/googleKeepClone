@@ -355,11 +355,11 @@ const HeaderBar = ({ open, handleDrawer }) => {
             </CToolTip>
           </Box>
           <CToolTip title="Refresh">
-            <IconButton size="large">
+            <IconButton size="large" disabled>
               <RefreshOutlinedIcon />
             </IconButton>
           </CToolTip>
-          <CToolTip title="List view">
+          <CToolTip title="List view" disabled>
             <IconButton
               size="large"
               sx={{ display: { xs: "none", sm: "inherit" } }}
@@ -367,14 +367,14 @@ const HeaderBar = ({ open, handleDrawer }) => {
               <SplitscreenOutlinedIcon />
             </IconButton>
           </CToolTip>
-          <CToolTip title="Settings">
+          <CToolTip title="Settings" disabled>
             <IconButton size="large">
               <SettingsOutlinedIcon />
             </IconButton>
           </CToolTip>
         </Box>
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <CToolTip title="Google appss">
+          <CToolTip title="Google appss" disabled>
             <IconButton size="large">
               <AppsOutlinedIcon />
             </IconButton>

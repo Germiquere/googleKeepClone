@@ -10,6 +10,7 @@ import { DataContext } from "../context/DataProvider";
 const Home = () => {
   const { notes } = useContext(DataContext);
   const orderNotes = (n) => {
+    console.log("me ejecuto");
     return n.sort((a, b) => {
       if (a.pin === b.pin) return 0;
       if (a.pin === true) return -1;
@@ -28,7 +29,10 @@ const Home = () => {
         <SwiperDrawer></SwiperDrawer>
 
         <Routes>
-          <Route path="/" element={<Notes></Notes>}></Route>
+          <Route
+            path="/"
+            element={<Notes orderNotes={orderNotes}></Notes>}
+          ></Route>
           <Route path="/archive" element={<Archives></Archives>}></Route>
           <Route path="/delete" element={<DeletedNotes></DeletedNotes>}></Route>
         </Routes>
