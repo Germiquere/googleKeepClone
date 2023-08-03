@@ -6,7 +6,7 @@ Presenting a fully functional replica of Google Keep: a meticulous demonstration
 ## Technologies
 
 - Javascript
-- Reac
+- React
 - Material UI
 - React-Router
 
